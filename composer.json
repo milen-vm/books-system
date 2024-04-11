@@ -1,0 +1,13 @@
+{
+    "name": "vagrant/books-system",
+    "type": "project",
+    "license": "GNU",
+    "autoload": {
+        "psr-4": {
+            "BooksSystem\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=8.0"
+    }
+}
