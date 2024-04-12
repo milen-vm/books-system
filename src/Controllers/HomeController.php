@@ -1,10 +1,11 @@
 <?php
 namespace BooksSystem\Controllers;
+use BooksSystem\Core\Controller;
 
-class HomeController
+class HomeController extends Controller
 {
     public function index()
     {
-        echo 'Home';
+        return $this->render();
     }
 }

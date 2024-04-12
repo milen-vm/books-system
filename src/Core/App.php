@@ -31,7 +31,6 @@ class App
     public function start(Request $request)
     {
         $this->request = $request;
-        // self::$configs = $config;
 
         $this->setController();
         $this->setAction();
@@ -60,7 +59,10 @@ class App
         $class = '\\BooksSystem\\Controllers\\' . ucfirst(strtolower($name)) . 'Controller';
 
         if (!class_exists($class)) {
-            throw new \Exception("Controller '{$name}' does not exists.");
+            header('HTTP/1.1 400 Bad request', true, 400);
+            echo '404';
+
+            exit;
         }
 
         $this->controller = new $class();
@@ -80,11 +82,12 @@ class App
         }
 
         if (!method_exists($this->controller, $action)) {
-            throw new \Exception('The method ' . $action .' in class '
-                . get_class($this->controller) . ' does not exists.');
+            header('HTTP/1.1 400 Bad request', true, 400);
+            echo '404';
+
+            exit;
         }
 
         $this->action = $action;
     }
 }
-

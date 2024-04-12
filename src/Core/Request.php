@@ -6,21 +6,17 @@ class Request
     private static $instance = null;
 
     private $uri;
-
     private $controller;
-
     private $action;
-
     private $method;
-
     private $params = [];
-
     private $get = [];
     private $post = [];
 
     private function __construct()
     {
         $this->setUri();
+        $this->parseUri();
         $this->setMethod();
 
         $this->get = $_GET;
@@ -39,9 +35,7 @@ class Request
     private function setUri()
     {
         $request = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-        $baseDir = dirname(dirname($_SERVER['PHP_SELF']));
-
-        $this->uri = trim(str_replace($baseDir, '', $request), '/');
+        $this->uri = trim($request, '/');
     }
 
     private function setMethod()
