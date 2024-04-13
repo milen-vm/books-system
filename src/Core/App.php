@@ -90,4 +90,27 @@ class App
 
         $this->action = $action;
     }
+
+    public static function csrfToken()
+    {
+        if (Session::isSetKey('csrfToken')) {
+
+            return Session::get('csrfToken');
+        }
+
+        return self::resetCsrfToken();
+    }
+
+    public static function resetCsrfToken()
+    {
+        $token =  hash('sha256', uniqid());
+        Session::set('csrfToken', $token);
+
+        return $token;
+    }
+
+    public static function host()
+    {
+        return $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'];
+    }
 }

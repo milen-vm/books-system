@@ -45,23 +45,34 @@ class View
 
     public function render($renderLayout = true)
     {
-        ob_start();
-        $model = $this->model;
-        $host = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'];
+        $host = App::host();
 
         if ($renderLayout) {
             $layout = self::$viewsDir. self::DS . 'layout.php';
 
             if (!is_readable($layout)) {
-                throw new \Exception('Header layout file not found.');
+                throw new \Exception('Layout file not found.');
             }
 
-            $content = file_get_contents($this->path);
+            $content = $this->renderContent($this->path, $this->model);
+
             require_once $layout;
         } else {
             require_once $this->path;
         }
+    }
 
-        echo ob_get_clean();
+    private function renderContent($paht, $model)
+    {
+        if (!is_readable($paht)) {
+            throw new \Exception('View file not found.');
+        }
+
+        ob_start();
+        require_once $paht;
+        $content = ob_get_contents();
+        ob_end_clean();
+
+        return $content;
     }
 }

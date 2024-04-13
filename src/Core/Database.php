@@ -8,24 +8,27 @@ class Database
      * @var \PDO
      */
     private static $db = null;
+    private static $instance = null;
     
     private function __construct()
-    {}
-    
-    public static function getInstance()
     {
         try {
-            if (self::$db === null) {
-                $dsn = 'mysql:host=localhost;dbname=books_system;charset=utf8';
-                self::$db = new \PDO($dsn, 'homestead', 'secret',
-                        [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]);
-            }
+            $dsn = 'mysql:host=localhost;dbname=books_system;charset=utf8';
+            self::$db = new \PDO($dsn, 'homestead', 'secret', [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]);
+
         } catch (\PDOException $e) {
             print "Error!: " . $e->getMessage() . "<br/>";
             exit();
         }
-        
-        return self::$db;
+    }
+    
+    public static function getInstance()
+    {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+
+        return self::$instance;
     }
     
     /**

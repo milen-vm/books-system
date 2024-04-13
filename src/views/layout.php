@@ -37,7 +37,7 @@
 
     <div class="container">
         <div class="row">
-            <?php echo $content; ?>
+            <?php echo $content ?>
         </div>
     </div>
 

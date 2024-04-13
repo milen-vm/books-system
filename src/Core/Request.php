@@ -21,6 +21,8 @@ class Request
 
         $this->get = $_GET;
         $this->post = $_POST;
+
+        $this->validateCsrfToken();
     }
 
     public static function getInstance()
@@ -65,6 +67,46 @@ class Request
         }
 
         $this->params = $parts;
+    }
+
+    private function validateCsrfToken()
+    {
+        if ($this->method !== 'POST') {
+
+            return;
+        }
+
+        $postToken = $this->postParam('_csrf');
+        $appToken = App::csrfToken();
+
+        if ($postToken !== $appToken) {
+            header('HTTP/1.1 400 Bad request', true, 400);
+            header('Location: ' . App::host() . '/home/error');
+
+            exit;
+        }
+
+        App::resetCsrfToken();
+    }
+
+    public function postParams(...$keys): array
+    {
+        $result = [];
+        foreach ($keys as $key) {
+            $result[] = $this->postParam($key);
+        }
+
+        return $result;
+    }
+
+    public function postParam($key): ?string
+    {
+        if (isset($this->post[$key])) {
+
+            return $this->post[$key];
+        }
+
+        return null;
     }
 
     public function controller()

@@ -8,4 +8,9 @@ class HomeController extends Controller
     {
         return $this->render();
     }
+
+    public function error()
+    {
+        return $this->render();
+    }
 }

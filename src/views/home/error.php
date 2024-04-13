@@ -1,0 +1,1 @@
+<strong class="text-center">Something was wrong!</strong>
