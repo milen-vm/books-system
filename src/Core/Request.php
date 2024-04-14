@@ -93,7 +93,7 @@ class Request
     {
         $result = [];
         foreach ($keys as $key) {
-            $result[] = $this->postParam($key);
+            $result[$key] = $this->postParam($key);
         }
 
         return $result;

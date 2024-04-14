@@ -1,12 +1,15 @@
 <?php
 namespace BooksSystem\Controllers;
 use BooksSystem\Core\Controller;
+use BooksSystem\Repositories\BookRepository;
 
 class HomeController extends Controller
 {
     public function index()
     {
-        return $this->render();
+        $books = (new BookRepository)->allBooks();
+
+        $this->render($books);
     }
 
     public function error()

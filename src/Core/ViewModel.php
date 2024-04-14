@@ -5,7 +5,7 @@ abstract class ViewModel
 {
     protected array $errors = [];
     
-    public function getErrors($separator = false)
+    public function getErrors($separator = false): array|string
     {
         if ($separator === false) {
 
@@ -13,5 +13,10 @@ abstract class ViewModel
         }
 
         return implode($separator, $this->errors);
+    }
+
+    public function addError(string $error)
+    {
+        $this->errors[] = $error;
     }
 }

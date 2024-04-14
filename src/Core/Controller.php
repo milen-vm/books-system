@@ -10,7 +10,7 @@ abstract class Controller
         $this->request = Request::getInstance();
     }
 
-    protected function render($model, $path = null, $hasLayot = true)
+    protected function render($model = null, $path = null, $hasLayot = true)
     {
         $view = new View($model, $path);
         $view->render($hasLayot);
@@ -20,5 +20,12 @@ abstract class Controller
     {
         header('Location: ' . App::host() . '/' . $path);
         exit;
+    }
+
+    protected function reqestMethod(string $method)
+    {
+        if ($this->request->method() !== $method) {
+            $this->redirect('home/error');
+        }
     }
 }

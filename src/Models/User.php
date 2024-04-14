@@ -1,24 +1,50 @@
 <?php
 namespace BooksSystem\Models;
-use BooksSystem\Core\Model;
 
-class User extends Model
+class User
 {
-    public function __construct()
+    public function __construct(
+    private int $id,
+    private string $first_name,
+    private string $last_name,
+    private string $email,
+    private bool $is_active,
+    private bool $is_admin,
+    private string $create_time
+    ) {}
+
+    public function getId()
     {
-        parent::__construct();
-        $this->table = 'users';
+        return $this->id;
     }
 
-    public function create($firstName, $lastName, $email, $password)
+    public function getFirstName()
     {
-        $id = $this->insert([
-            'first_name' => $firstName,
-            'last_name' => $lastName,
-            'email' => $email,
-            'password' => password_hash($password, PASSWORD_DEFAULT),
-        ]);
+        return $this->first_name;
+    }
 
-        return $id;
+    public function getLastName()
+    {
+        return $this->last_name;
+    }
+
+    public function email()
+    {
+        return $this->email;
+    }
+
+    public function isActive()
+    {
+        return (bool) $this->is_active;
+    }
+
+    public function isAdmin()
+    {
+        return (bool) $this->is_admin;
+    }
+
+    public function getCreateTime()
+    {
+        return $this->create_time;
     }
 }

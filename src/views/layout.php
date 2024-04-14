@@ -15,21 +15,39 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="">Books</a>
+            <a class="navbar-brand" href="/">Books</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="">Galleries</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?php echo $host ?>/user/create">Register</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link disabled">Disabled</a>
-                    </li>
+                    <?php if ($hasUser): ?>
+
+                        <?php if ($isAdmin): ?>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Admin</button>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item" href="<?php echo $host ?>/admin/create_book">New Book</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        <?php endif ?>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?php echo $host ?>/user/books">My Books</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?php echo $host ?>/user/logout">Logout</a>
+                        </li>
+                    <?php else: ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?php echo $host ?>/user/create">Register</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?php echo $host ?>/user/login">Login</a>
+                        </li>
+                    <?php endif ?>
                 </ul>
             </div>
         </div>
