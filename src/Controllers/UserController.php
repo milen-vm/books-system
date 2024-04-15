@@ -19,12 +19,12 @@ class UserController extends Controller
     public function create()
     {
         if ($serObj = Session::pull('userViewModel')) {
-            $userView = unserialize($serObj);
+            $model = unserialize($serObj);
         } else {
-            $userView = new UserViewModel();
+            $model = new UserViewModel();
         }
 
-        $this->render($userView);
+        $this->render(compact('model'));
     }
 
     public function store()
@@ -57,12 +57,12 @@ class UserController extends Controller
     public function login()
     {
         if ($serObj = Session::pull('loginViewModel')) {
-            $loginView = unserialize($serObj);
+            $model = unserialize($serObj);
         } else {
-            $loginView = new LoginViewModel();
+            $model = new LoginViewModel();
         }
 
-        $this->render($loginView);
+        $this->render(compact('model'));
     }
 
     public function login_user()
@@ -79,7 +79,7 @@ class UserController extends Controller
             $this->redirect('user/login');
         }
 
-        $user = (new UserRepository())->login(...$params);
+        $user = $this->userRepository->login(...$params);
         if ($user === false) {
             $loginView->addError('Invalid credentials.');
             $serObj = serialize($loginView);

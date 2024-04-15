@@ -4,13 +4,13 @@ namespace BooksSystem\Models;
 class User
 {
     public function __construct(
-    private int $id,
-    private string $first_name,
-    private string $last_name,
-    private string $email,
-    private bool $is_active,
-    private bool $is_admin,
-    private string $create_time
+        private int $id,
+        private string $first_name,
+        private string $last_name,
+        private string $email,
+        private bool $is_active,
+        private bool $is_admin,
+        private string $create_time
     ) {}
 
     public function getId()

@@ -10,9 +10,14 @@ abstract class Controller
         $this->request = Request::getInstance();
     }
 
-    protected function render($model = null, $path = null, $hasLayot = true)
+    protected function render($variables = [], $path = null, $hasLayot = true)
     {
-        $view = new View($model, $path);
+
+        $hasUser = Session::isSetKey('logedUser');
+        $variables['hasUser'] = $hasUser;
+        $variables['isAdmin'] = $hasUser ? Session::get('isAdmin') : false;
+
+        $view = new View($variables, $path);
         $view->render($hasLayot);
     }
 

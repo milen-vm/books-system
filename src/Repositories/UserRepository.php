@@ -19,6 +19,7 @@ class UserRepository extends Repository
             'last_name' => $lastName,
             'email' => $email,
             'password' => password_hash($password, PASSWORD_DEFAULT),
+            'is_active' => 0,
         ]);
 
         return $id;

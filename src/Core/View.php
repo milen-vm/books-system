@@ -7,15 +7,15 @@ class View
 
     private static $viewsDir = '';
     private static $app;
-    private $model;
+    private $variables;
     private $path;
 
-    public function __construct($model = null, $path = null)
+    public function __construct($variables = [], $path = null)
     {
         self::$viewsDir = getcwd() . '/../src/views';
         self::$app = App::getInstance();
 
-        $this->model = $model;
+        $this->variables = $variables;
         $this->setPath($path);
     }
 
@@ -45,18 +45,19 @@ class View
 
     public function render($renderLayout = true)
     {
-        $host = App::host();
+        $host = self::$app::host();
         $hasUser = Session::isSetKey('logedUser');
         $isAdmin = $hasUser ? Session::get('isAdmin') : false;
 
         if ($renderLayout) {
             $layout = self::$viewsDir. self::DS . 'layout.php';
 
-            if (!is_readable($layout)) {
-                throw new \Exception('Layout file not found.');
+            if (!is_readable($layout) || !is_readable($this->path)) {
+                throw new \Exception('Layout or view file not found.');
             }
 
-            $content = $this->renderContent($this->path, $this->model);
+            extract($this->variables);
+            $path = $this->path;
 
             require_once $layout;
         } else {
@@ -64,17 +65,12 @@ class View
         }
     }
 
-    private function renderContent($paht, $model)
+    public static function encode($value)
     {
-        if (!is_readable($paht)) {
-            throw new \Exception('View file not found.');
+        if (is_null($value)) {
+            echo $value;
+        } else {
+            echo htmlentities($value);
         }
-
-        ob_start();
-        require_once $paht;
-        $content = ob_get_contents();
-        ob_end_clean();
-
-        return $content;
     }
 }

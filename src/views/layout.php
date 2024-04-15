@@ -55,7 +55,7 @@
 
     <div class="container">
         <div class="row">
-            <?php echo $content ?>
+            <?php require_once $path ?>
         </div>
     </div>
 

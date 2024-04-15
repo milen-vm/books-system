@@ -3,6 +3,8 @@ namespace BooksSystem\Core;
 
 class App
 {
+    private const DEFAULT_CONTROLER = 'book';
+    private const DEFAULT_ACTION = 'index';
     private static $instance = null;
 
     private $controller;
@@ -50,7 +52,7 @@ class App
     private function setController()
     {
         if ($this->request->controller() === null) {
-            $name = 'Home';
+            $name = self::DEFAULT_CONTROLER;
         } else {
             $name = $this->request->controller();
         }
@@ -76,7 +78,7 @@ class App
     private function setAction()
     {
         if ($this->request->action() === null) {
-            $action = 'index';
+            $action = self::DEFAULT_ACTION;
         } else {
             $action = strtolower($this->request->action());
         }

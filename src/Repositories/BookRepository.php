@@ -3,7 +3,6 @@ namespace BooksSystem\Repositories;
 
 use BooksSystem\Core\Repository;
 use BooksSystem\Models\Book;
-use BooksSystem\Models\User;
 
 class BookRepository extends Repository
 {
@@ -13,7 +12,7 @@ class BookRepository extends Repository
         $this->table = 'books';
     }
 
-    public function create($name, $isbn, $description)
+    public function create($name, $isbn, $description): int
     {
         $id = $this->insert([
             'name' => $name,
@@ -26,13 +25,13 @@ class BookRepository extends Repository
 
     public function allBooks(): array
     {
-        $items = $this->findAll(['orderby' => 'create_time DESC']);
-        $books = [];
+        return $this->findAll(['orderby' => 'create_time DESC']);
+    }
 
-        foreach ($items as $item) {
-            $books[] = new Book(...$item);
-        }
-        
-        return $books;
+    public function getById($id): array
+    {
+        $result = $this->find(['where' => 'id = ?'], [$id]);
+
+        return $result;
     }
 }
