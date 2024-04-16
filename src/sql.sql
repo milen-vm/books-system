@@ -21,4 +21,13 @@ CREATE TABLE books(
     create_time DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE books_users(
+    id int NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    book_id INT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE,
+    UNIQUE KEY user_id_book_id (user_id, book_id)
+);
+
 SELECT * FROM users;

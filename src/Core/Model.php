@@ -4,6 +4,8 @@ namespace BooksSystem\Core;
 abstract class Model
 {
     protected array $errors = [];
+    protected ?int $id = null;
+    protected static string $table;
 
     public function getErrors(string|bool $separator = false): array|string
     {
@@ -24,6 +26,23 @@ abstract class Model
         return count($this->errors) > 0;
     }
 
+    public function save(array $props = []): bool
+    {
+        if ($props) {
+            $this->setProps($props);
+        }
+
+        if (!$this->validate()) {
+            return false;
+        }
+
+        if ($this->id) {
+            return $this->update();
+        }
+
+        return $this->create();
+    }
+
     public function setProps(array $props)
     {
         foreach ($props as $key => $val) {
@@ -38,4 +57,8 @@ abstract class Model
     }
 
     abstract public function validate(): bool;
+
+    abstract protected function update(): bool;
+
+    abstract protected function create(): bool;
 }

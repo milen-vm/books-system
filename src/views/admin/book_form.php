@@ -11,7 +11,7 @@
         </div>
     <?php endif ?>
 
-    <form class="mt-3" action="<?php echo $host ?>/admin/store_book" method="POST">
+    <form class="mt-3" action="<?php echo $host . $action ?>" method="POST">
         <input name="_csrf" type="hidden" value="<?php echo \BooksSystem\Core\App::csrfToken() ?>">
 
         <div class="mb-3">

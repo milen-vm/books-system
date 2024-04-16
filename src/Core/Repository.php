@@ -1,17 +1,18 @@
 <?php
 namespace BooksSystem\Core;
 
-abstract class Repository
+class Repository
 {
     protected static Database $db;
     protected string $table;
 
-    public function __construct()
+    public function __construct(string $table)
     {
+        $this->table = $table;
         self::$db = Database::getInstance();
     }
 
-    protected function insert($params)
+    public function insert($params)
     {
         $columns = array_keys($params);
         $values = array_values($params);
@@ -29,17 +30,40 @@ abstract class Repository
             return self::$db->lastId();
         }
 
-        throw new \Exception('Database error.');
+        return false;
     }
 
-    protected function findAll($args = [], $params = [], $fetchStyle = \PDO::FETCH_ASSOC)
+    public function update($args, $params): bool
+    {
+        // $args = [
+        //     'where' => 'id = ?',
+        //     'values' => [2]
+        // ];
+        $columns = array_keys($params);
+        $values = array_values($params);
+        $stmt = 'UPDATE ' . $this->table . ' SET ';
+
+        foreach ($columns as $column) {
+            $stmt .= "{$column} = ?, ";
+        }
+
+        $stmt = trim($stmt, ', ');
+        $stmt .= ' WHERE ' . $args['where'];
+
+        $result = self::$db->prepare($stmt);
+        $result->execute(array_merge($values, $args['values']));
+
+        return $result->rowCount() > 0;
+    }
+
+    public function findAll($args = [], $params = [], $fetchStyle = \PDO::FETCH_ASSOC)
     {
         $result = $this->prepareFind($args, $params);
 
         return $result->fetchAll($fetchStyle);
     }
 
-    protected function find($args = [], $params = [], $fetchStyle = \PDO::FETCH_ASSOC)
+    public function find($args = [], $params = [], $fetchStyle = \PDO::FETCH_ASSOC)
     {
         $result = $this->prepareFind($args, $params);
         $arr = $result->fetch($fetchStyle);

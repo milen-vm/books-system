@@ -30,6 +30,9 @@
                                     <li>
                                         <a class="dropdown-item" href="<?php echo $host ?>/admin/create_book">New Book</a>
                                     </li>
+                                    <li>
+                                        <a class="dropdown-item" href="<?php echo $host ?>/admin/users">Users</a>
+                                    </li>
                                 </ul>
                             </div>
                         <?php endif ?>
@@ -38,7 +41,10 @@
                             <a class="nav-link" href="<?php echo $host ?>/user/books">My Books</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="<?php echo $host ?>/user/logout">Logout</a>
+                            <form style="display: inline-block;" action="<?php echo $host ?>/user/logout" method="POST">
+                                <input name="_csrf" type="hidden" value="<?php echo \BooksSystem\Core\App::csrfToken() ?>">
+                                <button class="nav-link" type="submit">Logout</button>
+                            </form>
                         </li>
                     <?php else: ?>
                         <li class="nav-item">

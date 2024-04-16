@@ -30,14 +30,8 @@ class Database
 
         return self::$instance;
     }
-    
-    /**
-     * 
-     * @param string $statement
-     * @param array $driverOptions
-     * @return Statement
-     */
-    public function prepare($statement, array $driverOptions = [])
+
+    public function prepare(string $statement, array $driverOptions = []): Statement
     {
         $statement = self::$db->prepare($statement, $driverOptions);
         
@@ -68,22 +62,12 @@ class Statement
         $this->stmt = $statement;
     }
 
-    /**
-     *
-     * @param int $fetchStyle            
-     * @return mixed
-     */
-    public function fetch($fetchStyle = \PDO::FETCH_ASSOC)
+    public function fetch($fetchStyle = \PDO::FETCH_ASSOC): mixed
     {
         return $this->stmt->fetch($fetchStyle);
     }
 
-    /**
-     *
-     * @param int $fetchStyle            
-     * @return mixed
-     */
-    public function fetchAll($fetchStyle = \PDO::FETCH_ASSOC)
+    public function fetchAll($fetchStyle = \PDO::FETCH_ASSOC): mixed
     {
         return $this->stmt->fetchAll($fetchStyle);
     }
@@ -98,21 +82,12 @@ class Statement
         return $this->stmt->bindParam($parameter, $variable, $dataType, $length, $driverOptions);
     }
 
-    /**
-     *
-     * @param array|null $inputParameters            
-     * @return boolean
-     */
-    public function execute(array $inputParameters = null)
+    public function execute(array|null $inputParameters = null): bool
     {
         return $this->stmt->execute($inputParameters);
     }
 
-    /**
-     *
-     * @return int
-     */
-    public function rowCount()
+    public function rowCount(): int
     {
         return $this->stmt->rowCount();
     }

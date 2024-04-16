@@ -46,8 +46,6 @@ class View
     public function render($renderLayout = true)
     {
         $host = self::$app::host();
-        $hasUser = Session::isSetKey('logedUser');
-        $isAdmin = $hasUser ? Session::get('isAdmin') : false;
 
         if ($renderLayout) {
             $layout = self::$viewsDir. self::DS . 'layout.php';

@@ -1,6 +1,8 @@
 <?php
 namespace BooksSystem\Core;
 
+use BooksSystem\Models\User;
+
 abstract class Controller
 {
     protected Request $request;
@@ -10,7 +12,7 @@ abstract class Controller
         $this->request = Request::getInstance();
     }
 
-    protected function render($variables = [], $path = null, $hasLayot = true)
+    protected function render(array $variables = [], string $path = null, bool $hasLayot = true)
     {
 
         $hasUser = Session::isSetKey('logedUser');
@@ -21,10 +23,18 @@ abstract class Controller
         $view->render($hasLayot);
     }
 
-    protected function redirect($path)
+    protected function redirect(string $path)
     {
         header('Location: ' . App::host() . '/' . $path);
         exit;
+    }
+
+    protected function redirectWithSession(string $path, string $key, $data)
+    {
+        $serData = serialize($data);
+        Session::set($key, $serData);
+
+        $this->redirect($path);
     }
 
     protected function reqestMethod(string $method)
@@ -32,5 +42,22 @@ abstract class Controller
         if ($this->request->method() !== $method) {
             $this->redirect('home/error');
         }
+    }
+
+    protected function auth()
+    {
+        if (!Session::isSetKey('logedUser')) {
+            $this->redirect('user/login');
+        }
+    }
+
+    protected function getLogedUser(): null|User
+    {
+        $data = Session::get('logedUser');
+        if (!$data) {
+            return null;
+        }
+
+        return unserialize($data);
     }
 }

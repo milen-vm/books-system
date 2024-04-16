@@ -3,25 +3,23 @@ namespace BooksSystem\Controllers;
 
 use BooksSystem\Core\Controller;
 use BooksSystem\Core\Session;
-use BooksSystem\Repositories\UserRepository;
+use BooksSystem\Models\Book;
+use BooksSystem\Models\User;
 use BooksSystem\ViewModels\LoginViewModel;
-use BooksSystem\ViewModels\UserViewModel;
 
 class UserController extends Controller
 {
-    protected UserRepository $userRepository;
 
     public function __construct()
     {
         parent::__construct();
-        $this->userRepository = new UserRepository();
     }
     public function create()
     {
-        if ($serObj = Session::pull('userViewModel')) {
+        if ($serObj = Session::pull('createUserModel')) {
             $model = unserialize($serObj);
         } else {
-            $model = new UserViewModel();
+            $model = new User();
         }
 
         $this->render(compact('model'));
@@ -31,27 +29,18 @@ class UserController extends Controller
     {
         $this->reqestMethod('POST');
 
-        $params = $this->request->postParams('firstName', 'lastName', 'email', 'password');
-        $userView = new UserViewModel(...$params);
+        $params = $this->request->postParams('first_name', 'last_name', 'email', 'password');
+        $user = new User(...$params);
 
-        if (!$userView->validate()) {
-            $serObj = serialize($userView);
-            Session::set('userViewModel', $serObj);
-
-            $this->redirect('user/create');
+        if (!$user->validate()) {
+            $this->redirectWithSession('user/create', 'createUserModel', $user);
         }
 
-        $id = $this->userRepository->create(...$params);
-        $user = $this->userRepository->login($params['email'], $params['password']);
-        
-        if ($user === false) {
+        if (!$user->save()) {
             $this->redirect('home/error');
         }
 
-        Session::set('logedUser', serialize($user));
-        Session::set('isAdmin', $user->isAdmin());
-
-        $this->redirect('user/books');
+        $this->redirect('user/login');
     }
 
     public function login()
@@ -73,19 +62,14 @@ class UserController extends Controller
         $loginView = new LoginViewModel(...$params);
 
         if (!$loginView->validate()) {
-            $serObj = serialize($loginView);
-            Session::set('loginViewModel', $serObj);
-
-            $this->redirect('user/login');
+            $this->redirectWithSession('user/login', 'loginViewModel', $loginView);
         }
 
-        $user = $this->userRepository->login(...$params);
+        $user = User::login(...$params);
         if ($user === false) {
             $loginView->addError('Invalid credentials.');
-            $serObj = serialize($loginView);
-            Session::set('loginViewModel', $serObj);
 
-            $this->redirect('user/login');
+            $this->redirectWithSession('user/login', 'loginViewModel', $loginView);
         }
 
         Session::set('logedUser', serialize($user));
@@ -96,15 +80,36 @@ class UserController extends Controller
 
     public function books()
     {
-        if (!Session::isSetKey('logedUser')) {
-            $this->redirect('user/login');
+        $this->auth();
+
+        $user = $this->getLogedUser();
+        $books = Book::byUser($user->getId());
+
+        $this->render(compact('books'));
+    }
+
+    public function add_book($id)
+    {
+        $this->auth();
+        $this->reqestMethod('POST');
+
+        $book = Book::getById($id);
+        $user = $this->getLogedUser();
+
+        if (!$book || !$user) {
+            $this->redirect('home/error');
         }
 
-        $this->render();
+        if (!$user->addBook($book)) {
+            $this->redirect('home/error');
+        }
+
+        $this->redirect('user/books');
     }
 
     public function logout()
     {
+        $this->reqestMethod('POST');
         Session::destroy();
 
         $this->redirect('user/login');

@@ -16,12 +16,12 @@
 
         <div class="mb-3">
             <label for="firstName" class="form-label">First Name</label>
-            <input type="text" name="firstName" value="<?php echo $model->getFirstName() ?>" class="form-control" id="firstName">
+            <input type="text" name="first_name" value="<?php echo $model->getFirstName() ?>" class="form-control" id="firstName">
         </div>
 
         <div class="mb-3">
             <label for="lastName" class="form-label">Last Name</label>
-            <input type="text" name="lastName" value="<?php echo $model->getLastName() ?>" class="form-control" id="lastName">
+            <input type="text" name="last_name" value="<?php echo $model->getLastName() ?>" class="form-control" id="lastName">
         </div>
 
         <div class="mb-3">

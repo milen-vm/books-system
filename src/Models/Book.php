@@ -3,21 +3,20 @@ namespace BooksSystem\Models;
 
 use BooksSystem\Core\Model;
 
-use BooksSystem\Repositories\BookRepository;
+use BooksSystem\Core\Repository;
 
 class Book extends Model
 {
-    private static BookRepository $repository;
-
-    private ?int $id = null;
+    private static Repository $repository;
+    protected static string $table = 'books';
 
     public function __construct(
-        private ?string $name = null,
-        private ?string $isbn = null,
-        private ?string $description = null,
-        private ?string $create_time = null
+        protected ?string $name = null,
+        protected ?string $isbn = null,
+        protected ?string $description = null,
+        protected ?string $create_time = null
     ) {
-        self::$repository = new BookRepository();
+        self::$repository = new Repository(self::$table);
     }
 
     public function getId()
@@ -47,8 +46,7 @@ class Book extends Model
 
     public static function getById($id): self
     {
-        $data = (new BookRepository())->getById($id);
-        $id = $data['id'];
+        $data = (new Repository(self::$table))->find(['where' => 'id = ?'], [$id]);
         unset($data['id']);
 
         $self = new self(...$data);
@@ -59,7 +57,7 @@ class Book extends Model
 
     public static function all(): array
     {
-        $items = (new BookRepository())->allBooks();
+        $items = (new Repository(self::$table))->findAll(['orderby' => 'create_time DESC']);
         $books = [];
         foreach ($items as $item) {
             $id = $item['id'];
@@ -73,40 +71,62 @@ class Book extends Model
         return $books;
     }
 
-    public function save(array $props = []): bool
+    protected function update(): bool
     {
-        if ($props) {
-            $this->setProps($props);
-        }
-
-        if (!$this->validate()) {
-            return false;
-        }
-
-        if ($this->id) {
-            return $this->update();
-        }
-
-        return $this->create();
+        return self::$repository->update(
+            ['where' => 'id = ?', 'values' => [$this->id]],
+            [
+                'name' => $this->name,
+                'isbn' => $this->isbn,
+                'description' => (empty($this->description) ? null : $this->description)
+            ]
+        );
     }
 
-    private function update()
+    protected function create(): bool
     {
-        return true;
-    }
+        $id = self::$repository->insert(
+            [
+                'name' => $this->name,
+                'isbn' => $this->isbn,
+                'description' => (empty($this->description) ? null : $this->description)
+            ]
+        );
 
-    private function create()
-    {
-        $id = self::$repository->create($this->name, $this->isbn, $this->description);
         if (!$id) {
             return false;
         }
 
         $this->id = $id;
-        $data = self::$repository->getById($id);
+        $data = self::$repository->find(['where' => 'id = ?'], [$id]);
         $this->create_time = $data['create_time'];
 
         return true;
+    }
+
+    public static function byUser($userId): array
+    {
+        $items = (new Repository(self::$table))->findAll(
+            [
+                'select' => 'books.*',
+                'join' => ['books_users AS bu ON books.id = bu.book_id'],
+                'where' => 'bu.user_id = ?',
+                'orderby' => 'books.create_time DESC'
+            ],
+            [$userId]
+        );
+
+        $books = [];
+        foreach ($items as $item) {
+            $id = $item['id'];
+            unset($item['id']);
+            
+            $book = new self(...$item);
+            $book->id = $id;
+            $books[] = $book;
+        }
+
+        return $books;
     }
 
     public function validate(): bool
