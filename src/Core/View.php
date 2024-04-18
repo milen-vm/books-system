@@ -46,6 +46,7 @@ class View
     public function render($renderLayout = true)
     {
         $host = self::$app::host();
+        extract($this->variables);
 
         if ($renderLayout) {
             $layout = self::$viewsDir. self::DS . 'layout.php';
@@ -54,7 +55,6 @@ class View
                 throw new \Exception('Layout or view file not found.');
             }
 
-            extract($this->variables);
             $path = $this->path;
 
             require_once $layout;

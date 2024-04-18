@@ -20,7 +20,7 @@ class User extends Model
     ) {
         self::$repository = new Repository(self::$table);
     }
-public function getTable() { return self::$table;}
+
     public function getId()
     {
         return $this->id;

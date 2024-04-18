@@ -3,6 +3,7 @@ namespace BooksSystem\Core;
 
 abstract class Model
 {
+    protected array $guarded = ['id'];
     protected array $errors = [];
     protected ?int $id = null;
     protected static string $table;
@@ -46,6 +47,11 @@ abstract class Model
     public function setProps(array $props)
     {
         foreach ($props as $key => $val) {
+            if (in_array($key, $this->guarded)) {
+
+                throw new \Exception("'{$key}' is guarded property.");
+            }
+
             if (!property_exists($this, $key)) {
                 $class = static::class;
 
