@@ -80,7 +80,7 @@ class App
         if ($this->request->action() === null) {
             $action = self::DEFAULT_ACTION;
         } else {
-            $action = strtolower($this->request->action());
+            $action = $this->build($this->request->action(), '-');
         }
 
         if (!method_exists($this->controller, $action)) {
@@ -91,6 +91,18 @@ class App
         }
 
         $this->action = $action;
+    }
+
+    private function build(string $sting, string $sepparator): string
+    {
+        $parts = explode($sepparator, strtolower($sting));
+        $str = array_shift($parts);
+
+        while (count($parts) > 0) {
+            $str .= ucfirst(array_shift($parts));
+        }
+
+        return $str;
     }
 
     public static function csrfToken()

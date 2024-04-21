@@ -6,10 +6,12 @@ use BooksSystem\Models\User;
 abstract class Controller
 {
     protected Request $request;
+    protected App $app;
 
     public function __construct()
     {
         $this->request = Request::getInstance();
+        $this->app = App::getInstance();
     }
 
     protected function render(array $variables = [], string $path = null, bool $hasLayot = true)
@@ -25,7 +27,7 @@ abstract class Controller
 
     protected function redirect(string $path)
     {
-        header('Location: ' . App::host() . '/' . $path);
+        header('Location: ' . $this->app::host() . '/' . $path);
         exit;
     }
 
@@ -47,6 +49,16 @@ abstract class Controller
     protected function auth()
     {
         if (!Session::isSetKey('logedUser')) {
+            $this->redirect('user/login');
+        }
+    }
+
+    protected function authActions(...$actions)
+    {
+        if (
+            in_array($this->app->getActionName(), $actions) &&
+            !Session::isSetKey('logedUser')
+        ) {
             $this->redirect('user/login');
         }
     }

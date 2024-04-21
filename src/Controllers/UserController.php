@@ -13,6 +13,8 @@ class UserController extends Controller
     public function __construct()
     {
         parent::__construct();
+
+        $this->authActions('removeBook', 'add_book', 'books');
     }
     public function create()
     {
@@ -80,8 +82,6 @@ class UserController extends Controller
 
     public function books()
     {
-        $this->auth();
-
         $user = $this->getLogedUser();
         $books = Book::byUser($user->getId());
 
@@ -90,7 +90,6 @@ class UserController extends Controller
 
     public function add_book($id)
     {
-        $this->auth();
         $this->reqestMethod('POST');
 
         $book = Book::getById($id);
@@ -105,6 +104,11 @@ class UserController extends Controller
         }
 
         $this->redirect('user/books');
+    }
+
+    public function removeBook($id)
+    {
+        $this->reqestMethod('POST');
     }
 
     public function logout()
