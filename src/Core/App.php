@@ -12,10 +12,7 @@ class App
     private $controllerName;
 
     private $action;
-    /**
-     * @var \BooksSystem\Core\Request
-     */
-    private $request;
+    private Request $request;
 
     private function __construct()
     {
